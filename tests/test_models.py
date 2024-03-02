@@ -1,11 +1,13 @@
 """
 Test cases for Pet Model
 """
+
 import os
 import logging
 from unittest import TestCase
 from wsgi import app
-from service.models import YourResourceModel, DataValidationError, db
+from service.models import Product, db
+from tests.factories import ProductFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
@@ -13,11 +15,11 @@ DATABASE_URI = os.getenv(
 
 
 ######################################################################
-#  YourResourceModel   M O D E L   T E S T   C A S E S
+#  Product   M O D E L   T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
-class TestYourResourceModel(TestCase):
-    """ Test Cases for YourResourceModel Model """
+class TestProduct(TestCase):
+    """Test Cases for Product Model"""
 
     @classmethod
     def setUpClass(cls):
@@ -30,12 +32,12 @@ class TestYourResourceModel(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """ This runs once after the entire test suite """
+        """This runs once after the entire test suite"""
         db.session.close()
 
     def setUp(self):
         """This runs before each test"""
-        db.session.query(YourResourceModel).delete()  # clean up the last tests
+        db.session.query(Product).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
@@ -46,9 +48,20 @@ class TestYourResourceModel(TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
-    def test_example_replace_this(self):
-        """ It should always be true """
-        # Todo: Remove this test case example
-        self.assertTrue(True)
+    def test_create_product(self):
+        """It should create a product"""
+        product = ProductFactory()
+        product.create()
+        self.assertIsNotNone(product.id)
+        found = Product.all()
+        self.assertEqual(len(found), 1)
+        data = Product.find(product.id)
+        self.assertEqual(data.name, product.name)
+        self.assertEqual(data.url, product.url)
+        self.assertEqual(data.description, product.description)
+        self.assertEqual(data.price, product.price)
+        self.assertEqual(data.rating, product.rating)
+        self.assertEqual(data.category, product.category)
+        self.assertEqual(data.status, product.status)
 
-    # Todo: Add your test cases here...
+    # Todo: Add your test cases here
