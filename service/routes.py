@@ -44,3 +44,42 @@ def index():
 ######################################################################
 
 # Todo: Place your REST API code here ...
+
+############################################################
+# Create product
+############################################################
+PRODUCTS: dict = {}
+
+@app.route("/products", methods=["POST"])
+def create_products():
+    """Create a product"""
+    app.logger.info("Request to Create product...")
+
+    data = request.get_json()
+    sku = data.get('sku')
+
+    if sku in PRODUCTS:
+        abort(status.HTTP_409_CONFLICT, f"Product with SKU'{sku}' already exists.")
+
+    name = data.get('name')
+    description = data.get('description')
+    price = data.get('price')
+    img_url = data.get('img_url')
+
+
+    product = 0
+    PRODUCTS[sku] = {
+        'id': len(PRODUCTS) + 1,
+        'name': name,
+        'description': description,
+        'price': price,
+        'img_url': img_url,
+    }
+
+    app.logger.info("Product %s created.", sku)
+    location_url = url_for("read_products", sku=sku, _external=True)
+    return (
+        jsonify(PRODUCTS[sku]),
+        status.HTTP_201_CREATED,
+        {"Location": location_url},
+    )
