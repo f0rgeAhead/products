@@ -124,9 +124,20 @@ class Product(db.Model):
         """
         try:
             self.name = data["name"]
-            self.url = data["url"]
+            if isinstance(data["url"], str):
+                self.url = data["url"]
+            else:
+                raise DataValidationError(
+                    "Invalid type for str [url]: " + str(type(data["url"]))
+                )
             self.description = data.get("description")
-            self.price = data["price"]
+            if isinstance(data["price"], float) or isinstance(data["price"], int):
+                self.price = float(data["price"])
+            else:
+                raise DataValidationError(
+                    "Invalid type for float [price]: " + str(type(data["price"]))
+                )
+
             self.rating = data.get("rating", 0.0)
             self.category = data.get("category")
             self.status = Status[data.get("status", "active").upper()]
