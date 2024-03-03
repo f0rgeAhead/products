@@ -8,10 +8,12 @@ from unittest import TestCase
 from wsgi import app
 from service.common import status
 from service.models import db, Product
+from tests.factories import ProductFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
+BASE_URL = "/products"
 
 
 ######################################################################
@@ -57,19 +59,33 @@ class TestYourResourceService(TestCase):
 
     # Todo: Add your test cases here...
     def test_create_product_success(self):
-        response = self.client.post('/products', data=json.dumps(self.product_data), content_type='application/json')
+        response = self.client.post(
+            "/products",
+            data=json.dumps(self.product_data),
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Test Product', response.data.decode())
+        self.assertIn("Test Product", response.data.decode())
 
     def test_create_product_already_exists(self):
-        self.client.post('/products', data=json.dumps(self.product_data), content_type='application/json')
-        response = self.client.post('/products', data=json.dumps(self.product_data), content_type='application/json')
+        self.client.post(
+            "/products",
+            data=json.dumps(self.product_data),
+            content_type="application/json",
+        )
+        response = self.client.post(
+            "/products",
+            data=json.dumps(self.product_data),
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, 409)
-        self.assertIn('already exists', response.data.decode())
+        self.assertIn("already exists", response.data.decode())
 
     def test_create_product_invalid_data(self):
         invalid_data = self.product_data.copy()
-        del invalid_data['price']
-        response = self.client.post('/products', data=json.dumps(invalid_data), content_type='application/json')
+        del invalid_data["price"]
+        response = self.client.post(
+            "/products", data=json.dumps(invalid_data), content_type="application/json"
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertIn('Invalid data', response.data.decode())
+        self.assertIn("Invalid data", response.data.decode())
