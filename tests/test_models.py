@@ -65,7 +65,7 @@ class TestProduct(TestCase):
         self.assertEqual(data.status, product.status)
 
     # Todo: Add your test cases here
-    def test_read_a_pet(self):
+    def test_read_a_product(self):
         """It should Read a Product"""
         product = ProductFactory()
         logging.debug(product)
@@ -83,7 +83,7 @@ class TestProduct(TestCase):
         self.assertEqual(found.category, product.category)
         self.assertEqual(found.status, product.status)
 
-    def test_serialize_a_pet(self):
+    def test_serialize_a_product(self):
         """It should serialize a Product"""
         product = ProductFactory()
         data = product.serialize()
@@ -105,8 +105,8 @@ class TestProduct(TestCase):
         self.assertIn("status", data)
         self.assertEqual(data["status"], product.status.name)
 
-    def test_deserialize_a_pet(self):
-        """It should de-serialize a Pet"""
+    def test_deserialize_a_product(self):
+        """It should de-serialize a Product"""
         data = ProductFactory().serialize()
         product = Product()
         product.deserialize(data)
