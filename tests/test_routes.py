@@ -73,7 +73,7 @@ class TestProductService(TestCase):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-    def test_create_pet(self):
+    def test_create_product(self):
         """It should Create a new Product"""
 
         test_product = ProductFactory()
@@ -101,7 +101,7 @@ class TestProductService(TestCase):
 
     def test_read_product(self):
         """It should Get a single Product"""
-        # get the id of a pet
+        # get the id of a product
         test_product = self._create_products(1)[0]
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
