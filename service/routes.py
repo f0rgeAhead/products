@@ -51,36 +51,73 @@ def index():
 ############################################################
 PRODUCTS: dict = {}
 
+
 @app.route("/products", methods=["POST"])
 def create_products():
-    """Create a product"""
+    """Create a product
+    This Endpoint will create a Product based on the data provided in the body of the request
+    """
     app.logger.info("Request to Create product...")
+    check_content_type("application/json")
 
     data = request.get_json()
-    sku = data.get('sku')
+    id = data.get("id")
 
-    if sku in PRODUCTS:
-        abort(status.HTTP_409_CONFLICT, f"Product with SKU'{sku}' already exists.")
+    if id in PRODUCTS:
+        error(status.HTTP_409_CONFLICT, f"Product with Id'{id}' already exists.")
 
-    name = data.get('name')
-    description = data.get('description')
-    price = data.get('price')
-    img_url = data.get('img_url')
+    product = Product()
+    product.deserialize(request.get_json())
+    product.create()
+    message = product.serialize()
+    location_url = url_for("read_products", product_id=product.id, _external=True)
+
+    app.logger.info("Product with ID: %d created.", product.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
-    product = 0
-    PRODUCTS[sku] = {
-        'id': len(PRODUCTS) + 1,
-        'name': name,
-        'description': description,
-        'price': price,
-        'img_url': img_url,
-    }
+@app.route("/products/<int:product_id>", methods=["GET"])
+def read_products(product_id):
+    """
+    Retrieve a single Product
 
-    app.logger.info("Product %s created.", sku)
-    location_url = url_for("read_products", sku=sku, _external=True)
-    return (
-        jsonify(PRODUCTS[sku]),
-        status.HTTP_201_CREATED,
-        {"Location": location_url},
+    This endpoint will return a Product based on it's id
+    """
+    app.logger.info("Request for pet with id: %s", product_id)
+    product = Product.find(product_id)
+    if not product:
+        error(status.HTTP_404_NOT_FOUND, f"Pet with id '{product_id}' was not found.")
+
+    app.logger.info("Returning pet: %s", product.name)
+    return jsonify(product.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# Checks the ContentType of a request
+######################################################################
+def check_content_type(content_type):
+    """Checks that the media type is correct"""
+    if "Content-Type" not in request.headers:
+        app.logger.error("No Content-Type specified.")
+        error(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {content_type}",
+        )
+
+    if request.headers["Content-Type"] == content_type:
+        return
+
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    error(
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        f"Content-Type must be {content_type}",
     )
+
+
+######################################################################
+# Logs error messages before aborting
+######################################################################
+def error(status_code, reason):
+    """Logs the error and then aborts"""
+    app.logger.error(reason)
+    abort(status_code, reason)
