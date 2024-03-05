@@ -84,7 +84,7 @@ def list_products():
     results = [product.serialize() for product in products]
 
     app.logger.info("Returning %d products", len(results))
-    return jsonify(results), status.HTTP_200_OK
+    return jsonify({"products": results}), status.HTTP_200_OK
 
 
 @app.route("/products/<int:product_id>", methods=["GET"])
@@ -117,12 +117,10 @@ def delete_products(product_id):
     product = Product.find(product_id)
     if product:
         product.delete()
+        app.logger.info("Product with ID: %d delete complete.", product_id)
     else:
-        error(
-            status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' does not exist"
-        )
+        app.logger.info("Product with ID: %d was not found.", product_id)
 
-    app.logger.info("Product with ID: %d delete complete.", product_id)
     return "", status.HTTP_204_NO_CONTENT
 
 
