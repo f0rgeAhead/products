@@ -86,10 +86,28 @@ def read_products(product_id):
     app.logger.info("Request for pet with id: %s", product_id)
     product = Product.find(product_id)
     if not product:
-        error(status.HTTP_404_NOT_FOUND, f"Pet with id '{product_id}' was not found.")
+        error(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
 
     app.logger.info("Returning pet: %s", product.name)
     return jsonify(product.serialize()), status.HTTP_200_OK
+
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_products(product_id):
+    """
+    Delete a Product
+
+    This endpoint will delete a Product based the id specified in the path
+    """
+    app.logger.info("Request to delete product with id: %d", product_id)
+
+    product = Product.find(product_id)
+    if product:
+        product.delete()
+    else:
+        error(status.HTTP_404_NOT_FOUND,f"Product with id '{product_id}' does not exist")
+
+    app.logger.info("Product with ID: %d delete complete.", product_id)
+    return "", status.HTTP_204_NO_CONTENT
 
 
 ######################################################################
