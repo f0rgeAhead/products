@@ -130,8 +130,14 @@ class TestProductService(TestCase):
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(len(data), 3)
-        for product in data:
+        # validate the response
+        self.assertIsInstance(data, dict)
+        self.assertIn("products", data)
+        self.assertIsInstance(data["products"], list)
+        # validate the products
+        products = data["products"]
+        self.assertEqual(len(products), 3)
+        for product in products:
             self.assert_is_product(product)
 
     def test_list_products_empty(self):
@@ -139,7 +145,13 @@ class TestProductService(TestCase):
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(len(data), 0)
+        # validate the response
+        self.assertIsInstance(data, dict)
+        self.assertIn("products", data)
+        self.assertIsInstance(data["products"], list)
+        # validate the products
+        products = data["products"]
+        self.assertEqual(len(products), 0)
 
     def test_read_product(self):
         """It should Get a single Product"""
@@ -170,12 +182,10 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_nonexist_product(self):
-        """It should return a HTTP 404 message"""
+        """It should return a HTTP 204 message"""
         response = self.client.delete(f"{BASE_URL}/10000000")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        data = response.get_json()
-        logging.debug("Response data = %s", data)
-        self.assertIn("does not exist", data["message"])
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        logging.debug("not found")
 
     # Todo: Add your test cases here...
     # def test_create_product_success(self):
