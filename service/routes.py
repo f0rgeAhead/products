@@ -76,6 +76,17 @@ def create_products():
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
+@app.route("/products", methods=["GET"])
+def list_products():
+    """Returns all products"""
+    app.logger.info("Request to list all products...")
+    products = Product.all()
+    results = [product.serialize() for product in products]
+
+    app.logger.info("Returning %d products", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
+
 @app.route("/products/<int:product_id>", methods=["GET"])
 def read_products(product_id):
     """
