@@ -1,0 +1,76 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Products",
+    "dateExported": "2024-03-05T21:28:32.423Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "3f139cf4-604f-4c60-9d60-9f2a6eef5e3b",
+            "colId": "959b9968-404e-4e28-86e2-7aeddf16a59a",
+            "containerId": "",
+            "name": "List Products",
+            "url": "localhost:8000/products",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-03-05T21:06:54.790Z",
+            "modified": "2024-03-05T21:06:54.790Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "10fee4f6-d30e-4027-ac95-365496497a08",
+            "colId": "959b9968-404e-4e28-86e2-7aeddf16a59a",
+            "containerId": "",
+            "name": "Create Product",
+            "url": "localhost:8000/products",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-03-05T21:07:08.568Z",
+            "modified": "2024-03-05T21:25:12.211Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Watch\",\n  \"url\": \"example.com\",\n  \"description\": \"test\",\n  \"price\": 4.55,\n  \"rating\": 5,\n  \"category\": \"gadgets\"\n}",
+                "form": []
+            },
+            "reqType": "post",
+            "tests": []
+        },
+        {
+            "_id": "df0eb8c5-aa02-4379-b624-95f13886e64d",
+            "colId": "959b9968-404e-4e28-86e2-7aeddf16a59a",
+            "containerId": "",
+            "name": "Get product by id",
+            "url": "localhost:8000/products/mkecd",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-03-05T21:07:22.296Z",
+            "modified": "2024-03-05T21:09:18.327Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "eb73759f-abb0-4a5b-abef-c5b8c5ef1bbd",
+            "colId": "959b9968-404e-4e28-86e2-7aeddf16a59a",
+            "containerId": "",
+            "name": "Delete product",
+            "url": "localhost:8000/products/73",
+            "method": "DELETE",
+            "sortNum": 40000,
+            "created": "2024-03-05T21:09:47.789Z",
+            "modified": "2024-03-05T21:20:40.427Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "tests": []
+        }
+    ]
+}
