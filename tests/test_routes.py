@@ -73,7 +73,7 @@ class TestProductService(TestCase):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-    def assert_product(self, product):
+    def assert_is_product(self, product):
         """Assert that a product has all the correct attributes"""
         self.assertIn("id", product)
         self.assertIsInstance(product["id"], int)
@@ -117,6 +117,7 @@ class TestProductService(TestCase):
 
         # Check the data is correct
         new_product = response.get_json()
+        self.assert_is_product(new_product)
         self.assert_two_products_are_the_same(new_product, test_product)
 
         # Check that the location header was correct
@@ -131,7 +132,7 @@ class TestProductService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 3)
         for product in data:
-            self.assert_product(product)
+            self.assert_is_product(product)
 
     def test_list_products_empty(self):
         """It should Get an empty list of Products"""
@@ -147,7 +148,7 @@ class TestProductService(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assert_product(data)
+        self.assert_is_product(data)
         self.assert_two_products_are_the_same(data, test_product)
 
     def test_read_product_not_found(self):
