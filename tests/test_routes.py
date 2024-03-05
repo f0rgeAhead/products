@@ -118,9 +118,9 @@ class TestProductService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
-    
+
     def test_delete_product(self):
-        """It should Delete a Pet"""
+        """It should Delete a Product"""
         test_product = self._create_products(1)[0]
         response = self.client.delete(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -128,7 +128,7 @@ class TestProductService(TestCase):
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_delete_nonexist_product(self):
         """It should return a HTTP 404 message"""
         response = self.client.delete(f"{BASE_URL}/10000000")
@@ -136,7 +136,6 @@ class TestProductService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("does not exist", data["message"])
-
 
     # Todo: Add your test cases here...
     # def test_create_product_success(self):
