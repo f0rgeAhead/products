@@ -33,9 +33,16 @@ from service.common import status  # HTTP Status Codes
 @app.route("/")
 def index():
     """Root URL response"""
-    return (
-        "Reminder: return some useful information in json format about the service here",
-        status.HTTP_200_OK,
+    return jsonify(
+        {
+            "urls": [
+                url_for("index", _external=True),
+                url_for("create_products", _method="POST", _external=True),
+                url_for("list_products", _external=True),
+                url_for("read_products", product_id=1, _external=True),
+                url_for("delete_products", product_id=1, _external=True),
+            ]
+        }
     )
 
 
