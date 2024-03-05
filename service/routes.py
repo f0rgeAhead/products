@@ -15,10 +15,10 @@
 ######################################################################
 
 """
-Pet Store Service
+Product Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Pets from the inventory of pets in the PetShop
+and Delete Products
 """
 
 from flask import jsonify, request, url_for, abort
@@ -76,6 +76,17 @@ def create_products():
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
+@app.route("/products", methods=["GET"])
+def list_products():
+    """Returns all products"""
+    app.logger.info("Request to list all products...")
+    products = Product.all()
+    results = [product.serialize() for product in products]
+
+    app.logger.info("Returning %d products", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
+
 @app.route("/products/<int:product_id>", methods=["GET"])
 def read_products(product_id):
     """
@@ -83,13 +94,16 @@ def read_products(product_id):
 
     This endpoint will return a Product based on it's id
     """
-    app.logger.info("Request for pet with id: %s", product_id)
+    app.logger.info("Request for product with id: %s", product_id)
     product = Product.find(product_id)
     if not product:
-        error(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
+        error(
+            status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found."
+        )
 
-    app.logger.info("Returning pet: %s", product.name)
+    app.logger.info("Returning product: %s", product.name)
     return jsonify(product.serialize()), status.HTTP_200_OK
+
 
 @app.route("/products/<int:product_id>", methods=["DELETE"])
 def delete_products(product_id):
@@ -104,7 +118,9 @@ def delete_products(product_id):
     if product:
         product.delete()
     else:
-        error(status.HTTP_404_NOT_FOUND,f"Product with id '{product_id}' does not exist")
+        error(
+            status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' does not exist"
+        )
 
     app.logger.info("Product with ID: %d delete complete.", product_id)
     return "", status.HTTP_204_NO_CONTENT

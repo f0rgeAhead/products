@@ -1,5 +1,5 @@
 """
-Test cases for Pet Model
+Test cases for Product Model
 """
 
 import os
@@ -121,7 +121,7 @@ class TestProduct(TestCase):
         self.assertEqual(product.status.name, data["status"])
 
     def test_deserialize_missing_data(self):
-        """It should not deserialize a Pet with missing data"""
+        """It should not deserialize a Product with missing data"""
         data = {"id": 1, "name": "Kola", "category": "drink", "price": 100}
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)

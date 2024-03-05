@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, Product
+from service.models import db, Product, Status
 from tests.factories import ProductFactory
 
 DATABASE_URI = os.getenv(
@@ -73,6 +73,36 @@ class TestProductService(TestCase):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
+    def assert_is_product(self, product):
+        """Assert that a product has all the correct attributes"""
+        self.assertIn("id", product)
+        self.assertIsInstance(product["id"], int)
+        self.assertIn("name", product)
+        self.assertIsInstance(product["name"], str)
+        self.assertIn("url", product)
+        self.assertIsInstance(product["url"], str)
+        self.assertIn("description", product)
+        self.assertIsInstance(product["description"], str)
+        self.assertIn("price", product)
+        self.assertIsInstance(product["price"], float)
+        self.assertIn("rating", product)
+        self.assertIsInstance(product["rating"], float)
+        self.assertIn("category", product)
+        self.assertIsInstance(product["category"], str)
+        self.assertIn("status", product)
+        self.assertIsInstance(product["status"], str)
+        self.assertIn(product["status"], [s.name for s in Status])
+
+    def assert_two_products_are_the_same(self, product1, product2):
+        """Assert that two products are the same"""
+        self.assertEqual(product1["name"], product2.name)
+        self.assertEqual(product1["price"], product2.price)
+        self.assertEqual(product1["description"], product2.description)
+        self.assertEqual(product1["status"], product2.status.name)
+        self.assertEqual(product1["url"], product2.url)
+        self.assertEqual(product1["rating"], product2.rating)
+        self.assertEqual(product1["category"], product2.category)
+
     def test_create_product(self):
         """It should Create a new Product"""
 
@@ -87,17 +117,29 @@ class TestProductService(TestCase):
 
         # Check the data is correct
         new_product = response.get_json()
-        self.assertEqual(new_product["name"], test_product.name)
-        self.assertEqual(new_product["price"], test_product.price)
-        self.assertEqual(new_product["description"], test_product.description)
-        self.assertEqual(new_product["status"], test_product.status.name)
-        self.assertEqual(new_product["url"], test_product.url)
-        self.assertEqual(new_product["rating"], test_product.rating)
-        self.assertEqual(new_product["category"], test_product.category)
+        self.assert_is_product(new_product)
+        self.assert_two_products_are_the_same(new_product, test_product)
 
         # Check that the location header was correct
         response = self.client.get(location)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_list_products(self):
+        """It should Get a list of Products"""
+        self._create_products(3)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
+        for product in data:
+            self.assert_is_product(product)
+
+    def test_list_products_empty(self):
+        """It should Get an empty list of Products"""
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 0)
 
     def test_read_product(self):
         """It should Get a single Product"""
@@ -106,10 +148,8 @@ class TestProductService(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(data["name"], test_product.name)
-        self.assertEqual(data["price"], test_product.price)
-        self.assertEqual(data["description"], test_product.description)
-        self.assertEqual(data["status"], test_product.status.name)
+        self.assert_is_product(data)
+        self.assert_two_products_are_the_same(data, test_product)
 
     def test_read_product_not_found(self):
         """It should not Get a Product thats not found"""
@@ -118,9 +158,9 @@ class TestProductService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
-    
+
     def test_delete_product(self):
-        """It should Delete a Pet"""
+        """It should Delete a Product"""
         test_product = self._create_products(1)[0]
         response = self.client.delete(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -128,7 +168,7 @@ class TestProductService(TestCase):
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_delete_nonexist_product(self):
         """It should return a HTTP 404 message"""
         response = self.client.delete(f"{BASE_URL}/10000000")
@@ -136,7 +176,6 @@ class TestProductService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("does not exist", data["message"])
-
 
     # Todo: Add your test cases here...
     # def test_create_product_success(self):
