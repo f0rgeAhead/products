@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "Products",
-    "dateExported": "2024-03-05T21:28:32.423Z",
+    "dateExported": "2024-03-05T21:33:32.104Z",
     "version": "1.1",
     "folders": [],
     "requests": [
@@ -28,12 +28,12 @@
             "method": "POST",
             "sortNum": 20000,
             "created": "2024-03-05T21:07:08.568Z",
-            "modified": "2024-03-05T21:25:12.211Z",
+            "modified": "2024-03-05T21:33:13.829Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"name\": \"Watch\",\n  \"url\": \"example.com\",\n  \"description\": \"test\",\n  \"price\": 4.55,\n  \"rating\": 5,\n  \"category\": \"gadgets\"\n}",
+                "raw": "{\n  \"name\": \"Watch\",\n  \"url\": \"example.com\",\n  \"description\": \"test\",\n  \"price\": 4.55,\n  \"rating\": 5,\n  \"category\": \"gadgets\",\n  \"status\": \"ACTIVE\"\n}",
                 "form": []
             },
             "reqType": "post",
