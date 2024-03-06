@@ -86,7 +86,6 @@ class TestProduct(TestCase):
         product = ProductFactory()
         self.assertRaises(DataValidationError, product.delete)
 
-    # Todo: Add your test cases here
     def test_read_a_product(self):
         """It should Read a Product"""
         product = ProductFactory()
