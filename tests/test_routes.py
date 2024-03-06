@@ -202,36 +202,3 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_product = response.get_json()
         self.assertEqual(updated_product["category"], "unknown")
-
-    # Todo: Add your test cases here...
-    # def test_create_product_success(self):
-    #     response = self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertIn("Test Product", response.data.decode())
-
-    # def test_create_product_already_exists(self):
-    #     self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     response = self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     self.assertEqual(response.status_code, 409)
-    #     self.assertIn("already exists", response.data.decode())
-
-    # def test_create_product_invalid_data(self):
-    #     invalid_data = self.product_data.copy()
-    #     del invalid_data["price"]
-    #     response = self.client.post(
-    #         "/products", data=json.dumps(invalid_data), content_type="application/json"
-    #     )
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertIn("Invalid data", response.data.decode())

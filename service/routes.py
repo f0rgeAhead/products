@@ -50,9 +50,6 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-
-# Todo: Place your REST API code here ...
-
 ############################################################
 # Create product
 ############################################################
@@ -68,10 +65,12 @@ def create_products():
     check_content_type("application/json")
 
     data = request.get_json()
-    id = data.get("id")
+    product_id = data.get("id")
 
-    if id in PRODUCTS:
-        error(status.HTTP_409_CONFLICT, f"Product with Id'{id}' already exists.")
+    if product_id in PRODUCTS:
+        error(
+            status.HTTP_409_CONFLICT, f"Product with Id'{product_id}' already exists."
+        )
 
     product = Product()
     product.deserialize(request.get_json())
