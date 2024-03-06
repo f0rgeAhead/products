@@ -64,7 +64,6 @@ class TestProduct(TestCase):
         self.assertEqual(data.category, product.category)
         self.assertEqual(data.status, product.status)
 
-    # Todo: Add your test cases here
     def test_read_a_product(self):
         """It should Read a Product"""
         product = ProductFactory()
