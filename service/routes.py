@@ -131,6 +131,30 @@ def delete_products(product_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
+@app.route("/products/<int:product_id>", methods=["PUT"])
+def update_products(product_id):
+    """
+    Update a Product
+
+    This endpoint will update a Product based the body that is posted
+    """
+    app.logger.info("Request to update product with id: %d", product_id)
+    check_content_type("application/json")
+
+    product = Product.find(product_id)
+    if not product:
+        error(
+            status.HTTP_404_NOT_FOUND, f"Product with id: '{product_id}' was not found."
+        )
+
+    product.deserialize(request.get_json())
+    product.id = product_id
+    product.update()
+
+    app.logger.info("Product with ID: %d updated.", product.id)
+    return jsonify(product.serialize()), status.HTTP_200_OK
+
+
 ######################################################################
 # Checks the ContentType of a request
 ######################################################################
