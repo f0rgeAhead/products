@@ -131,7 +131,7 @@ class Product(db.Model):
                     "Invalid type for str [img_url]: " + str(type(data["img_url"]))
                 )
             self.description = data.get("description")
-            if isinstance(data["price"], float) or isinstance(data["price"], int):
+            if isinstance(data["price"], (float, int)):
                 self.price = float(data["price"])
             else:
                 raise DataValidationError(
