@@ -200,8 +200,8 @@ class TestProductService(TestCase):
         new_product["category"] = "unknown"
         response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_pet = response.get_json()
-        self.assertEqual(updated_pet["category"], "unknown")
+        updated_product = response.get_json()
+        self.assertEqual(updated_product["category"], "unknown")
 
     # Todo: Add your test cases here...
     # def test_create_product_success(self):
