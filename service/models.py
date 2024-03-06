@@ -14,7 +14,7 @@ Attributes:
 -----------
 id (integer) - the unique identifier for a product
 name (string, required) - the name of the product
-url (string, required) - the url of the product
+img_url (string, required) - the image url of the product
 description (string) - the description of the product
 price (float, required) - the price of the product, in dollars (e.g. 9.99)
 rating (integer, required, default=0.0) - the rating of the product (e.g. 4.5)
@@ -131,7 +131,7 @@ class Product(db.Model):
                     "Invalid type for str [img_url]: " + str(type(data["img_url"]))
                 )
             self.description = data.get("description")
-            if isinstance(data["price"], float) or isinstance(data["price"], int):
+            if isinstance(data["price"], (float, int)):
                 self.price = float(data["price"])
             else:
                 raise DataValidationError(

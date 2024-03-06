@@ -1,35 +1,238 @@
-# NYU DevOps Project Template
+# NYU DevOps Product Squad
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 
-This is a skeleton you can use to start your projects
+This repository contains the code for the NYU DevOps Product Squad project. This service handles product operations on a an e-commerce website.
 
 ## Overview
 
-This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
+The product service is a Python Flask application that provides a RESTful API for managing products in an e-commerce website. It is part of a microservices architecture and is designed to be deployed in a containerized environment.
 
-## Automatic Setup
+The `/service` folder contains our `models.py` file for our model and a `routes.py` file for our service. The `/tests` folder has test case starter code for testing the model and the service separately.
 
-The best way to use this repo is to start your own repo using it as a git template. To do this just press the green **Use this template** button in GitHub and this will become the source for your repository.
+## How to get started
 
-## Manual Setup
-
-You can also clone this repository and then copy and paste the starter code into your project repo folder on your local computer. Be careful not to copy over your own `README.md` file so be selective in what you copy.
-
-There are 4 hidden files that you will need to copy manually if you use the Mac Finder or Windows Explorer to copy files from this folder into your repo folder.
-
-These should be copied using a bash shell as follows:
+### Reset database/model
 
 ```bash
-    cp .gitignore  ../<your_repo_folder>/
-    cp .flaskenv ../<your_repo_folder>/
-    cp .gitattributes ../<your_repo_folder>/
+flask db-create
 ```
 
-## Contents
+### Run the app
 
-The project contains the following:
+```bash
+flask run
+```
+
+### Run the tests
+
+```bash
+make test
+```
+
+# Database Schema
+
+The product service uses a SQLite database to store product data. The database schema is defined in the `models.py` module. The schema consists of a single table called `products` with the following columns:
+
+| Column    | Type    | Description               | Constraints               |
+|-----------|---------|---------------------------|---------------------------|
+| id        | Integer | Unique product identifier | Primary key, autoincrement|
+| name      | String  | Product name              | Not null                  |
+| img_url   | String  | Product image URL         | Not null                  |
+| description| String  | Product description       |                           |
+| price     | Float   | Product price             | Not null                  |
+| rating    | Integer | Product rating            | Not null, default=0        |
+| category  | String  | Product category          |                           |
+| status    | Enum    | Product status            | Not null, default="active"|
+
+## Constraints and Validations
+
+- **id**: Must be an integer greater than 0.
+- **name**: Must be a non-empty string.
+- **img_url**: Must be a non-empty string.
+- **description**: Can be an empty string.
+- **price**: Must be a float representing the price in dollars.
+- **rating**: Must be an integer representing the rating, default is 0.
+- **category**: Must be a string representing the category.
+- **status**: Must be one of the predefined values in the Status enum, default is "active".
+
+# API Endpoints
+
+Overview of the API endpoints for the product service:
+
+1. [Root URL](#root-url) - The root URL for the service
+2. [Product Endpoints](#product-endpoints) - Endpoints for managing products
+    1. Create a new product
+    2. Get a list of all products
+    3. Delete a product
+3. [Error Handling](#error-handling) - How the service handles HTTP errors
+
+## Root URL
+
+The root URL for the service is `/products`. All routes are relative to this URL.
+
+## Product Endpoints
+
+The service provides the following endpoints for managing products:
+
+| Method | URI              | Description                         |
+|--------|------------------|-------------------------------------|
+| GET    | /products        | Retrieves a list of all products    |
+| GET    | /products/<id>   | Retrieves a single product by its ID|
+| POST   | /products        | Creates a new product               |
+| PUT    | /products/<id>   | Updates a product by its ID         |
+| DELETE | /products/<id>   | Deletes a product by its ID         |
+
+## Usage
+
+- **Create Product**
+
+```http
+POST /products
+```
+
+URL - `localhost:8000/products`
+
+Request Body:
+
+```json
+{
+    "name": "Product Name",
+    "img_url": "https://example.com/image.jpg",
+    "description": "Product description",
+    "price": 9.99,
+    "category": "Category",
+    "status": "active"
+}
+```
+
+Request Response: 201 Created
+
+```json
+{
+    "id": 1,
+    "name": "Product Name",
+    "img_url": "https://example.com/image.jpg",
+    "description": "Product description",
+    "price": 9.99,
+    "rating": 0,
+    "category": "Category",
+    "status": "active"
+}
+```
+
+- **Get All Products**
+
+```http
+GET /products
+```
+
+URL - `localhost:8000/products`
+
+Request Response: 200 OK
+
+```json
+[
+    {
+        "id": 1,
+        "name": "Product Name",
+        "img_url": "https://example.com/image.jpg",
+        "description": "Product description",
+        "price": 9.99,
+        "rating": 0,
+        "category": "Category",
+        "status": "active"
+    },
+        {
+        "id": 2,
+        "name": "Product Name 2 ",
+        "img_url": "https://example.com/image2.jpg",
+        "description": "Product description2",
+        "price": 14.26,
+        "rating": 0,
+        "category": "Category",
+        "status": "disabled"
+    }
+]
+```
+
+- **Get Product by ID**
+
+```http
+GET /products/<product_id>
+```
+
+URL - `localhost:8000/products/<product_id>`
+
+Request Response: 200 OK
+
+```json
+{
+    "id": "<product_id>",
+    "name": "Product Name",
+    "img_url": "https://example.com/image.jpg",
+    "description": "Product description",
+    "price": 9.99,
+    "rating": 0,
+    "category": "Category",
+    "status": "active"
+}
+```
+
+- **Update Product**
+
+```http
+PUT /products/<product_id>
+```
+
+URL - `localhost:8000/products/<product_id>`
+
+Request Body:
+
+```json
+{
+    "name": "New Product Name",
+    "img_url": "https://example.com/new-image.jpg",
+    "description": "New product description",
+    "price": 19.99,
+    "category": "New Category",
+    "status": "inactive"
+}
+```
+
+Request Response: 200 OK
+
+```json
+{
+    "id": 1,
+    "name": "New Product Name",
+    "img_url": "https://example.com/new-image.jpg",
+    "description": "New product description",
+    "price": 19.99,
+    "rating": 0,
+    "category": "New Category",
+    "status": "inactive"
+}
+```
+
+- **Delete Product**
+
+```http
+DELETE /products/<product_id>
+```
+
+URL - `localhost:8000/products/<product_id>`
+
+Request Response: 204 No Content
+
+## Error Handling
+
+The service uses the `@app.errorhandler` decorator to handle HTTP errors. The `common/error_handlers.py` module contains the error handling code. The `common/status.py` module contains the HTTP status constants.
+
+# Repository Structure
+
+Our project repository and its files possess the following structure:
 
 ```text
 .gitignore          - this will ignore vagrant and other metadata files
