@@ -187,14 +187,14 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         logging.debug("not found")
 
-    def test_update_pet(self):
+    def test_update_product(self):
         """It should Update an existing Product"""
-        # create a pet to update
+        # create a product to update
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # update the pet
+        # update the product
         new_product = response.get_json()
         logging.debug(new_product)
         new_product["category"] = "unknown"
