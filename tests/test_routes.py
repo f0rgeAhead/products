@@ -124,6 +124,16 @@ class TestProductService(TestCase):
         response = self.client.get(location)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_create_product_duplicate(self):
+        """It should not Create a Product that already exists"""
+        test_product = ProductFactory()
+        test_product.id = 2
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        print(response.get_json())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(BASE_URL, json=response.get_json())
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
     def test_list_products(self):
         """It should Get a list of Products"""
         self._create_products(3)
@@ -203,35 +213,20 @@ class TestProductService(TestCase):
         updated_product = response.get_json()
         self.assertEqual(updated_product["category"], "unknown")
 
-    # Todo: Add your test cases here...
-    # def test_create_product_success(self):
-    #     response = self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertIn("Test Product", response.data.decode())
+    def test_bad_request(self):
+        """It should not create when sending the wrong data"""
+        resp = self.client.post(BASE_URL, json={})
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_create_product_already_exists(self):
-    #     self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     response = self.client.post(
-    #         "/products",
-    #         data=json.dumps(self.product_data),
-    #         content_type="application/json",
-    #     )
-    #     self.assertEqual(response.status_code, 409)
-    #     self.assertIn("already exists", response.data.decode())
+    def test_unsupported_media_type(self):
+        """It should not Create when sending wrong media type"""
+        product = ProductFactory()
+        resp = self.client.post(
+            BASE_URL, json=product.serialize(), content_type="test/html"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    # def test_create_product_invalid_data(self):
-    #     invalid_data = self.product_data.copy()
-    #     del invalid_data["price"]
-    #     response = self.client.post(
-    #         "/products", data=json.dumps(invalid_data), content_type="application/json"
-    #     )
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertIn("Invalid data", response.data.decode())
+    def test_method_not_allowed(self):
+        """It should not allow an illegal method call"""
+        resp = self.client.put(BASE_URL, json={})
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
