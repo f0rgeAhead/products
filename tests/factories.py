@@ -17,7 +17,7 @@ class ProductFactory(factory.Factory):
 
     id = factory.Sequence(lambda n: n)
     name = factory.Faker("name")
-    url = factory.Faker("url")
+    img_url = factory.Faker("url")
     description = factory.Faker("text")
     price = factory.Faker("random_number", digits=2)
     rating = factory.Faker("random_number", digits=1)

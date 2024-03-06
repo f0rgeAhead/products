@@ -57,7 +57,7 @@ class TestProduct(TestCase):
         self.assertEqual(len(found), 1)
         data = Product.find(product.id)
         self.assertEqual(data.name, product.name)
-        self.assertEqual(data.url, product.url)
+        self.assertEqual(data.img_url, product.img_url)
         self.assertEqual(data.description, product.description)
         self.assertEqual(data.price, product.price)
         self.assertEqual(data.rating, product.rating)
@@ -76,7 +76,7 @@ class TestProduct(TestCase):
         found = Product.find(product.id)
         self.assertEqual(found.id, product.id)
         self.assertEqual(found.name, product.name)
-        self.assertEqual(found.url, product.url)
+        self.assertEqual(found.img_url, product.img_url)
         self.assertEqual(found.description, product.description)
         self.assertEqual(found.price, product.price)
         self.assertEqual(found.rating, product.rating)
@@ -92,8 +92,8 @@ class TestProduct(TestCase):
         self.assertEqual(data["id"], product.id)
         self.assertIn("name", data)
         self.assertEqual(data["name"], product.name)
-        self.assertIn("url", data)
-        self.assertEqual(data["url"], product.url)
+        self.assertIn("img_url", data)
+        self.assertEqual(data["img_url"], product.img_url)
         self.assertIn("description", data)
         self.assertEqual(data["description"], product.description)
         self.assertIn("price", data)
@@ -113,7 +113,7 @@ class TestProduct(TestCase):
         self.assertNotEqual(product, None)
         self.assertEqual(product.id, None)
         self.assertEqual(product.name, data["name"])
-        self.assertEqual(product.url, data["url"])
+        self.assertEqual(product.img_url, data["img_url"])
         self.assertEqual(product.description, data["description"])
         self.assertEqual(product.price, data["price"])
         self.assertEqual(product.rating, data["rating"])
@@ -141,9 +141,9 @@ class TestProduct(TestCase):
         self.assertRaises(DataValidationError, product.deserialize, data)
 
     def test_deserialize_bad_url(self):
-        """It should not deserialize a bad url attribute"""
+        """It should not deserialize a bad img_url attribute"""
         test_product = ProductFactory()
         data = test_product.serialize()
-        data["url"] = 100  # wrong case
+        data["img_url"] = 100  # wrong case
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)

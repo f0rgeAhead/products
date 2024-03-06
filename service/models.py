@@ -53,7 +53,7 @@ class Product(db.Model):
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
-    url = db.Column(db.String(63), nullable=False)
+    img_url = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(1024))
     price = db.Column(db.Float(), nullable=False)
     rating = db.Column(db.Float(), nullable=False, server_default="0.0")
@@ -107,7 +107,7 @@ class Product(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "url": self.url,
+            "img_url": self.img_url,
             "description": self.description,
             "price": self.price,
             "rating": self.rating,
@@ -124,11 +124,11 @@ class Product(db.Model):
         """
         try:
             self.name = data["name"]
-            if isinstance(data["url"], str):
-                self.url = data["url"]
+            if isinstance(data["img_url"], str):
+                self.img_url = data["img_url"]
             else:
                 raise DataValidationError(
-                    "Invalid type for str [url]: " + str(type(data["url"]))
+                    "Invalid type for str [img_url]: " + str(type(data["img_url"]))
                 )
             self.description = data.get("description")
             if isinstance(data["price"], float) or isinstance(data["price"], int):
