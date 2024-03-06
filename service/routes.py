@@ -53,7 +53,6 @@ def index():
 ############################################################
 # Create product
 ############################################################
-PRODUCTS: dict = {}
 
 
 @app.route("/products", methods=["POST"])
@@ -67,10 +66,13 @@ def create_products():
     data = request.get_json()
     product_id = data.get("id")
 
-    if product_id in PRODUCTS:
-        error(
-            status.HTTP_409_CONFLICT, f"Product with Id'{product_id}' already exists."
-        )
+    if product_id:
+        product = Product.find(product_id)
+        if product:
+            error(
+                status.HTTP_409_CONFLICT,
+                f"Product with Id'{product_id}' already exists.",
+            )
 
     product = Product()
     product.deserialize(request.get_json())

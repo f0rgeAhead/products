@@ -5,6 +5,7 @@ Test cases for Product Model
 import os
 import logging
 from unittest import TestCase
+from unittest.mock import patch
 from wsgi import app
 from service.models import Product, db, DataValidationError
 from tests.factories import ProductFactory
@@ -64,6 +65,28 @@ class TestProduct(TestCase):
         self.assertEqual(data.category, product.category)
         self.assertEqual(data.status, product.status)
 
+    @patch("service.models.db.session.commit")
+    def test_create_product_failed(self, exception_mock):
+        """It should not create a product on database error"""
+        exception_mock.side_effect = Exception()
+        product = ProductFactory()
+        self.assertRaises(DataValidationError, product.create)
+
+    @patch("service.models.db.session.commit")
+    def test_update_product_failed(self, exception_mock):
+        """It should not update a product on database error"""
+        exception_mock.side_effect = Exception()
+        product = ProductFactory()
+        self.assertRaises(DataValidationError, product.update)
+
+    @patch("service.models.db.session.commit")
+    def test_delete_product_failed(self, exception_mock):
+        """It should not delete a product on database error"""
+        exception_mock.side_effect = Exception()
+        product = ProductFactory()
+        self.assertRaises(DataValidationError, product.delete)
+
+    # Todo: Add your test cases here
     def test_read_a_product(self):
         """It should Read a Product"""
         product = ProductFactory()
