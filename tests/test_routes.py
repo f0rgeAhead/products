@@ -79,8 +79,8 @@ class TestProductService(TestCase):
         self.assertIsInstance(product["id"], int)
         self.assertIn("name", product)
         self.assertIsInstance(product["name"], str)
-        self.assertIn("url", product)
-        self.assertIsInstance(product["url"], str)
+        self.assertIn("img_url", product)
+        self.assertIsInstance(product["img_url"], str)
         self.assertIn("description", product)
         self.assertIsInstance(product["description"], str)
         self.assertIn("price", product)
@@ -99,7 +99,7 @@ class TestProductService(TestCase):
         self.assertEqual(product1["price"], product2.price)
         self.assertEqual(product1["description"], product2.description)
         self.assertEqual(product1["status"], product2.status.name)
-        self.assertEqual(product1["url"], product2.url)
+        self.assertEqual(product1["img_url"], product2.img_url)
         self.assertEqual(product1["rating"], product2.rating)
         self.assertEqual(product1["category"], product2.category)
 
@@ -186,6 +186,22 @@ class TestProductService(TestCase):
         response = self.client.delete(f"{BASE_URL}/10000000")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         logging.debug("not found")
+
+    def test_update_pet(self):
+        """It should Update an existing Product"""
+        # create a pet to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the pet
+        new_product = response.get_json()
+        logging.debug(new_product)
+        new_product["category"] = "unknown"
+        response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_pet = response.get_json()
+        self.assertEqual(updated_pet["category"], "unknown")
 
     # Todo: Add your test cases here...
     # def test_create_product_success(self):
