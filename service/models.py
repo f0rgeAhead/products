@@ -61,6 +61,7 @@ class Product(db.Model):
     status = db.Column(
         db.Enum(Status), nullable=False, server_default=(Status.ACTIVE.name)
     )
+    likes = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"<Product {self.name} id=[{self.id}]>"
@@ -102,6 +103,19 @@ class Product(db.Model):
             logger.error("Error deleting record: %s", self)
             raise DataValidationError(e) from e
 
+    def like(self):
+        """
+        Increases the like count for a product
+        """
+        logger.info("Adding like to %s", self.name)
+        self.likes += 1
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error("Error adding like to product: %s", self)
+            raise DataValidationError(e) from e
+
     def serialize(self):
         """Serializes a Product into a dictionary"""
         return {
@@ -113,6 +127,7 @@ class Product(db.Model):
             "rating": self.rating,
             "category": self.category,
             "status": self.status.name,
+            "likes": self.likes,
         }
 
     def deserialize(self, data):

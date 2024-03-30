@@ -64,6 +64,7 @@ class TestProduct(TestCase):
         self.assertEqual(data.rating, product.rating)
         self.assertEqual(data.category, product.category)
         self.assertEqual(data.status, product.status)
+        self.assertEqual(data.likes, product.likes)
 
     @patch("service.models.db.session.commit")
     def test_create_product_failed(self, exception_mock):
@@ -103,6 +104,16 @@ class TestProduct(TestCase):
         self.assertEqual(found.rating, product.rating)
         self.assertEqual(found.category, product.category)
         self.assertEqual(found.status, product.status)
+        self.assertEqual(found.likes, product.likes)
+
+    def test_like_a_product(self):
+        """It should Like a Product"""
+        product = ProductFactory()
+        logging.debug(product)
+        product.create()
+        initial_likes = product.likes
+        product.like()
+        self.assertEqual(product.likes, initial_likes + 1)
 
     def test_serialize_a_product(self):
         """It should serialize a Product"""
@@ -125,6 +136,8 @@ class TestProduct(TestCase):
         self.assertEqual(data["category"], product.category)
         self.assertIn("status", data)
         self.assertEqual(data["status"], product.status.name)
+        self.assertIn("likes", data)
+        self.assertEqual(data["likes"], product.likes)
 
     def test_deserialize_a_product(self):
         """It should de-serialize a Product"""
@@ -140,6 +153,7 @@ class TestProduct(TestCase):
         self.assertEqual(product.rating, data["rating"])
         self.assertEqual(product.category, data["category"])
         self.assertEqual(product.status.name, data["status"])
+        self.assertEqual(product.likes, data["likes"])
 
     def test_deserialize_missing_data(self):
         """It should not deserialize a Product with missing data"""
