@@ -17,7 +17,7 @@ name (string, required) - the name of the product
 img_url (string, required) - the image url of the product
 description (string) - the description of the product
 price (float, required) - the price of the product, in dollars (e.g. 9.99)
-rating (integer, required, default=0.0) - the rating of the product (e.g. 4.5)
+rating (float, required, default=0.0) - the rating of the product (e.g. 4.5)
 category (string) - the category of the product (e.g. "clothes")
 status (enum, required, default="active") - the status of the product (i.e. "active" or "disabled")
 """
