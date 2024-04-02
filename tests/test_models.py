@@ -64,6 +64,7 @@ class TestProduct(TestCase):
         self.assertEqual(data.rating, product.rating)
         self.assertEqual(data.category, product.category)
         self.assertEqual(data.status, product.status)
+        self.assertEqual(data.likes, product.likes)
 
     @patch("service.models.db.session.commit")
     def test_create_product_failed(self, exception_mock):
@@ -103,6 +104,16 @@ class TestProduct(TestCase):
         self.assertEqual(found.rating, product.rating)
         self.assertEqual(found.category, product.category)
         self.assertEqual(found.status, product.status)
+        self.assertEqual(found.likes, product.likes)
+
+    def test_like_a_product(self):
+        """It should Like a Product"""
+        product = ProductFactory()
+        logging.debug(product)
+        product.create()
+        initial_likes = product.likes
+        product.like()
+        self.assertEqual(product.likes, initial_likes + 1)
 
     def test_serialize_a_product(self):
         """It should serialize a Product"""
@@ -125,6 +136,8 @@ class TestProduct(TestCase):
         self.assertEqual(data["category"], product.category)
         self.assertIn("status", data)
         self.assertEqual(data["status"], product.status.name)
+        self.assertIn("likes", data)
+        self.assertEqual(data["likes"], product.likes)
 
     def test_deserialize_a_product(self):
         """It should de-serialize a Product"""
@@ -140,6 +153,7 @@ class TestProduct(TestCase):
         self.assertEqual(product.rating, data["rating"])
         self.assertEqual(product.category, data["category"])
         self.assertEqual(product.status.name, data["status"])
+        self.assertEqual(product.likes, data["likes"])
 
     def test_deserialize_missing_data(self):
         """It should not deserialize a Product with missing data"""
@@ -209,3 +223,105 @@ class TestProduct(TestCase):
         products = Product.filter_by_query(price="100")
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].price, 100.0)
+
+    ######################################################################
+    #  D A T A   V A L I D A T I O N   T E S T   C A S E S
+    ######################################################################
+
+    def test_create_product_with_missing_name(self):
+        """It should not create a product with missing name"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.name = None
+            product.create()
+
+    def test_create_product_with_invalid_name(self):
+        """It should not create a product with name longer than 120 characters"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.name = "t" * 121
+            product.create()
+
+    def test_create_product_with_missing_img_url(self):
+        """It should not create a product with missing image URL"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.img_url = None
+            product.create()
+
+    def test_create_product_with_invalid_img_url(self):
+        """It should not create a product with image URL longer than 63 characters"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.img_url = "t" * 121
+            product.create()
+
+    def test_create_product_with_invalid_description(self):
+        """It should not create a product with description longer than 1024 characters"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.description = "t" * 2049
+            product.create()
+
+    def test_create_product_with_missing_price(self):
+        """It should not create a product with missing price"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.price = None
+            product.create()
+
+    def test_create_product_with_invalid_price_type(self):
+        """It should not create a product with invalid price type"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.price = "invalid"
+            product.create()
+
+    def test_create_product_with_negative_price(self):
+        """It should not create a product with negative price"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.price = -1
+            product.create()
+
+    def test_create_product_with_invalid_rating_type(self):
+        """It should not create a product with invalid rating type"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.rating = "invalid"
+            product.create()
+
+    def test_create_product_with_invalid_rating_range(self):
+        """It should not create a product with rating out of range"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.rating = 10
+            product.create()
+
+    def test_create_product_with_invalid_category(self):
+        """It should not create a product with category longer than 63 characters"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.category = "t" * 121
+            product.create()
+
+    def test_create_product_with_invalid_status(self):
+        """It should not create a product with invalid status"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.status = "invalid"
+            product.create()
+
+    def test_create_product_with_invalid_likes_type(self):
+        """It should not create a product with invalid likes type"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.likes = "invalid"
+            product.create()
+
+    def test_create_product_with_negative_likes(self):
+        """It should not create a product with negative likes"""
+        product = ProductFactory()
+        with self.assertRaises(DataValidationError):
+            product.likes = -1
+            product.create()

@@ -92,6 +92,8 @@ class TestProductService(TestCase):
         self.assertIn("status", product)
         self.assertIsInstance(product["status"], str)
         self.assertIn(product["status"], [s.name for s in Status])
+        self.assertIn("likes", product)
+        self.assertIsInstance(product["likes"], int)
 
     def assert_two_products_are_the_same(self, product1, product2):
         """Assert that two products are the same"""
@@ -212,6 +214,39 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_product = response.get_json()
         self.assertEqual(updated_product["category"], "unknown")
+
+    def test_like_product(self):
+        """It should increment the likes count of a product"""
+        # create a product to like
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Like a product
+        new_product = response.get_json()
+        logging.debug(new_product)
+        new_product_id = new_product["id"]
+
+        like_response = self.client.post(f"{BASE_URL}/{new_product_id}/like")
+        self.assertEqual(like_response.status_code, status.HTTP_200_OK)
+
+        # Verify the like
+        response = self.client.get(f"{BASE_URL}/{new_product_id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(
+            data["likes"],
+            1,
+            "The likes count should be incremented",
+        )
+
+    def test_like_product_not_found(self):
+        """It should return a HTTP 404 Not Found for a product that doesn't exist"""
+        response = self.client.post(f"{BASE_URL}/0/like")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("404", data["message"])
 
     def test_bad_request(self):
         """It should not create when sending the wrong data"""
