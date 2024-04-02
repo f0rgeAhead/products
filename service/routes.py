@@ -41,6 +41,7 @@ def index():
                 url_for("list_products", _external=True),
                 url_for("read_products", product_id=1, _external=True),
                 url_for("delete_products", product_id=1, _external=True),
+                url_for("like_product", _method="POST", product_id=1, _external=True),
             ]
         }
     )
@@ -154,6 +155,26 @@ def update_products(product_id):
 
     app.logger.info("Product with ID: %d updated.", product.id)
     return jsonify(product.serialize()), status.HTTP_200_OK
+
+
+@app.route("/products/<int:product_id>/like", methods=["POST"])
+def like_product(product_id):
+    """Like a product
+    This Endpoint will like a Product based on the data provided in the body of the request
+    """
+    app.logger.info("Request to Like a product...")
+    product = Product.query.get(product_id)
+    if not product:
+        error(status.HTTP_404_NOT_FOUND, "This product doesn't exist.")
+
+    product.like()
+    app.logger.info(f"Product {product_id} got a like")
+    return (
+        jsonify(
+            {"message": "The product got a like successfully", "likes": product.likes}
+        ),
+        status.HTTP_200_OK,
+    )
 
 
 ######################################################################
