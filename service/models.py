@@ -25,6 +25,7 @@ status (enum, required, default="active") - the status of the product (i.e. "act
 import logging
 from enum import Enum
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 
 logger = logging.getLogger("flask.app")
 
@@ -33,7 +34,7 @@ db = SQLAlchemy()
 
 
 class DataValidationError(Exception):
-    """Used for an data validation errors when deserializing"""
+    """Used for an data validation errors when deserializing or validating data fields"""
 
 
 class Status(Enum):
@@ -184,3 +185,77 @@ class Product(db.Model):
         """Finds a Product by it's ID"""
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
+
+    ##################################################
+    # DATA VALIDATIONS
+    ##################################################
+
+    @validates("name")
+    def validate_name(self, key, name):
+        """Validates the Name field in model to have maximum of 120 characters"""
+        if not name:
+            raise DataValidationError("Name is required")
+        if len(name) > 120:
+            raise DataValidationError("Name must be at most 120 characters")
+        return name
+
+    @validates("img_url")
+    def validate_img_url(self, key, img_url):
+        """Validates the Image Url field in model to have maximum of 120 characters"""
+        if not img_url:
+            raise DataValidationError("Image URL is required")
+        if len(img_url) > 120:
+            raise DataValidationError("Image URL must be at most 120 characters")
+        return img_url
+
+    @validates("description")
+    def validate_description(self, key, description):
+        """Validates the Description field in model to have maximum of 2048 characters"""
+        if description and len(description) > 2048:
+            raise DataValidationError("Description must be at most 2048 characters")
+        return description
+
+    @validates("price")
+    def validate_price(self, key, price):
+        """Validates the Price field in model to be not None, non-negative and be float or int type value"""
+        if price is None:
+            raise DataValidationError("Price is required")
+        if not isinstance(price, (float, int)):
+            raise DataValidationError("Price must be a float or integer")
+        if price < 0:
+            raise DataValidationError("Price must be non-negative")
+        return price
+
+    @validates("rating")
+    def validate_rating(self, key, rating):
+        """Validates the rating field in model to be a float or int value and be in the 0.0 to 9.9 range"""
+        if not isinstance(rating, (float, int)):
+            raise DataValidationError("Rating must be a float or integer")
+        if rating < 0.0 or rating > 9.9:
+            raise DataValidationError("Rating must be between 0 and 5")
+        return rating
+
+    @validates("category")
+    def validate_category(self, key, category):
+        """Validates the Category field in model to have maximum of 120 characters"""
+        if category and len(category) > 120:
+            raise DataValidationError("Category must be at most 120 characters")
+        return category
+
+    @validates("status")
+    def validate_status(self, key, status):
+        """Validates the status field"""
+        if status is None:
+            raise DataValidationError("Status is required")
+        if not isinstance(status, Status):
+            raise DataValidationError("Invalid status value")
+        return status
+
+    @validates("likes")
+    def validate_likes(self, key, likes):
+        """Validates the likes field in model to be non negative and be a integer"""
+        if not isinstance(likes, int):
+            raise DataValidationError("Likes must be an integer")
+        if likes < 0:
+            raise DataValidationError("Likes must be non-negative")
+        return likes
