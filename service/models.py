@@ -179,17 +179,21 @@ class Product(db.Model):
             if key == "category":
                 query_obj = query_obj.filter(cls.category.ilike(f"%{value}%"))
             elif key == "rating":
-                #Handle rating range queries
+                # Handle rating range queries
                 if "-" in value:
                     min_rating, max_rating = map(float, value.split("-"))
-                    query_obj = query_obj.filter(cls.rating.between(min_rating, max_rating))
+                    query_obj = query_obj.filter(
+                        cls.rating.between(min_rating, max_rating)
+                    )
                 else:
                     query_obj = query_obj.filter(cls.rating == float(value))
             elif key == "price":
-                #Handle price range queries
+                # Handle price range queries
                 if "-" in value:
                     min_price, max_price = map(float, value.split("-"))
-                    query_obj = query_obj.filter(cls.price.between(min_price, max_price))
+                    query_obj = query_obj.filter(
+                        cls.price.between(min_price, max_price)
+                    )
                 else:
                     query_obj = query_obj.filter(cls.price == float(value))
         return query_obj.all()
