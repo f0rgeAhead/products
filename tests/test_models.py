@@ -168,3 +168,44 @@ class TestProduct(TestCase):
         data["img_url"] = 100  # wrong case
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
+
+    def test_filter_by_category(self):
+        """It should filter products by category"""
+        # create some products using the factory
+        ProductFactory(category="electronics").create()
+        ProductFactory(category="electronics").create()
+        ProductFactory(category="clothes").create()
+
+        # filter products by category
+        products = Product.filter_by_query(category="electronics")
+        self.assertEqual(len(products), 2)
+
+    def test_filter_by_rating(self):
+        """It should filter products by rating"""
+        # create some products using the factory
+        ProductFactory(rating=4.0).create()
+        ProductFactory(rating=3.0).create()
+        ProductFactory(rating=2.0).create()
+
+        # filter products by rating
+        products = Product.filter_by_query(rating="2-4")
+        self.assertEqual(len(products), 3)
+
+        products = Product.filter_by_query(rating="4")
+        self.assertEqual(len(products), 1)
+        self.assertEqual(products[0].rating, 4.0)
+
+    def test_filter_by_price(self):
+        """It should filter products by price"""
+        # create some products using the factory
+        ProductFactory(price=50.0).create()
+        ProductFactory(price=100.0).create()
+        ProductFactory(price=200.0).create()
+
+        # filter products by price
+        products = Product.filter_by_query(price="0-150")
+        self.assertEqual(len(products), 2)
+
+        products = Product.filter_by_query(price="100")
+        self.assertEqual(len(products), 1)
+        self.assertEqual(products[0].price, 100.0)
