@@ -26,6 +26,7 @@ class TestProductService(TestCase):
     @classmethod
     def setUpClass(cls):
         """Run once before all tests"""
+        # pylint: disable=duplicate-code
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         # Set up the test database

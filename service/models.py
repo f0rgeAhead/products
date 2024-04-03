@@ -45,6 +45,7 @@ class Status(Enum):
 
 
 class Product(db.Model):
+    # pylint: disable=too-many-instance-attributes
     """
     Class that represents a Product
     """
@@ -219,7 +220,7 @@ class Product(db.Model):
     ##################################################
 
     @validates("name")
-    def validate_name(self, key, name):
+    def validate_name(self, name):
         """Validates the Name field in model to have maximum of 120 characters"""
         if not name:
             raise DataValidationError("Name is required")
@@ -228,7 +229,7 @@ class Product(db.Model):
         return name
 
     @validates("img_url")
-    def validate_img_url(self, key, img_url):
+    def validate_img_url(self, img_url):
         """Validates the Image Url field in model to have maximum of 120 characters"""
         if not img_url:
             raise DataValidationError("Image URL is required")
@@ -237,14 +238,14 @@ class Product(db.Model):
         return img_url
 
     @validates("description")
-    def validate_description(self, key, description):
+    def validate_description(self, description):
         """Validates the Description field in model to have maximum of 2048 characters"""
         if description and len(description) > 2048:
             raise DataValidationError("Description must be at most 2048 characters")
         return description
 
     @validates("price")
-    def validate_price(self, key, price):
+    def validate_price(self, price):
         """Validates the Price field in model to be not None, non-negative and be float or int type value"""
         if price is None:
             raise DataValidationError("Price is required")
@@ -255,7 +256,7 @@ class Product(db.Model):
         return price
 
     @validates("rating")
-    def validate_rating(self, key, rating):
+    def validate_rating(self, rating):
         """Validates the rating field in model to be a float or int value and be in the 0.0 to 9.9 range"""
         if not isinstance(rating, (float, int)):
             raise DataValidationError("Rating must be a float or integer")
@@ -264,14 +265,14 @@ class Product(db.Model):
         return rating
 
     @validates("category")
-    def validate_category(self, key, category):
+    def validate_category(self, category):
         """Validates the Category field in model to have maximum of 120 characters"""
         if category and len(category) > 120:
             raise DataValidationError("Category must be at most 120 characters")
         return category
 
     @validates("status")
-    def validate_status(self, key, status):
+    def validate_status(self, status):
         """Validates the status field"""
         if status is None:
             raise DataValidationError("Status is required")
@@ -280,7 +281,7 @@ class Product(db.Model):
         return status
 
     @validates("likes")
-    def validate_likes(self, key, likes):
+    def validate_likes(self, likes):
         """Validates the likes field in model to be non negative and be a integer"""
         if not isinstance(likes, int):
             raise DataValidationError("Likes must be an integer")
