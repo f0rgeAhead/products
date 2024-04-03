@@ -238,6 +238,50 @@ Request Response: 204 No Content
 
 The service uses the `@app.errorhandler` decorator to handle HTTP errors. The `common/error_handlers.py` module contains the error handling code. The `common/status.py` module contains the HTTP status constants.
 
+## Deploying to local Kubernetes Cluster
+- In order to create the cluster run
+  ```
+  make cluster
+  ```
+- To delete a cluster run
+  ```
+  make cluster-rm
+  ```
+- After creating a cluster, to build the docker image run
+  ```
+  docker build -t prod:1.0 .
+  ```
+-  Then tag the docker image to cluster-registry using
+   ```
+   docker tag prod:1.0 cluster-registry:32000/prod:1.0
+   ```
+- Later Push the docker image to the cluster registry
+  ```
+  docker push cluster-registry:32000/prod:1.0
+  ```
+- Then run the following commands to setup the deployment, postgresql server and the persistent volume.
+  ```
+  kubectl apply -f k8s/pv.yaml
+  kubectl apply -f k8s/postgreql.yaml
+  kubectl apply -f k8s/deployment.yaml
+  kubectl apply -f k8s/service.yaml
+  kubectl apply -f k8s/ingress.yaml
+  ```
+- The app should not be running and would be accesable at `localhost:8080`, in order to check the status of the services,pods,ingress run:
+  ```
+  kc get all
+  ```
+- To check the logs of a specific container/service run:
+   ```
+   kc logs <service-name>
+   ```
+- To delete the service, ingress and deployment run:
+  ```
+  kc delete deploy,svc,ing <service-name>
+  ```
+
+
+
 # Repository Structure
 
 Our project repository and its files possess the following structure:
