@@ -32,6 +32,12 @@ flask run
 make test
 ```
 
+### Run linter
+
+```bash
+make lint
+```
+
 # Database Schema
 
 The product service uses a SQLite database to store product data. The database schema is defined in the `models.py` module. The schema consists of a single table called `products` with the following columns:
