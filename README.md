@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 [![CI Build](https://github.com/CSCI-GA-2820-SP24-003/products/actions/workflows/ci.yml/badge.svg)](https://github.com/CSCI-GA-2820-SP24-003/products/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/CSCI-GA-2820-SP24-003/products/graph/badge.svg?token=8ULJTQ5HXX)](https://codecov.io/gh/CSCI-GA-2820-SP24-003/products)
 
 This repository contains the code for the NYU DevOps Product Squad project. This service handles product operations on a an e-commerce website.
 
