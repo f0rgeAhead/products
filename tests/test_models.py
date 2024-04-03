@@ -25,6 +25,7 @@ class TestProduct(TestCase):
     @classmethod
     def setUpClass(cls):
         """This runs once before the entire test suite"""
+        # pylint: disable=duplicate-code
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI

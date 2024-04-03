@@ -45,6 +45,7 @@ class Status(Enum):
 
 
 class Product(db.Model):
+    # pylint: disable=too-many-instance-attributes
     """
     Class that represents a Product
     """
@@ -217,6 +218,8 @@ class Product(db.Model):
     ##################################################
     # DATA VALIDATIONS
     ##################################################
+
+    # pylint: disable=unused-argument
 
     @validates("name")
     def validate_name(self, key, name):
