@@ -15,10 +15,18 @@
 				"markdown-preview-github-styles.colorTheme": "light",
 				"makefile.extensionOutputFolder": "/tmp",
 				"python.testing.unittestEnabled": false,
-				"python.testing.pytestEnabled": true,			
+				"python.testing.pytestEnabled": true,
 				"python.testing.pytestArgs": [
 					"tests"
 				],
+				"cucumberautocomplete.steps": [
+					"features/steps/*.py"
+				],
+				"cucumberautocomplete.syncfeatures": "features/*.feature",
+				"cucumberautocomplete.strictGherkinCompletion": true,
+				"cucumberautocomplete.strictGherkinValidation": true,
+				"cucumberautocomplete.smartSnippets": true,
+				"cucumberautocomplete.gherkinDefinitionPart": "@(given|when|then)\\(",
 				"files.exclude": {
 					"**/.git": true,
 					"**/.DS_Store": true,
@@ -59,10 +67,8 @@
 		}
 	},
 	"postCreateCommand": "bash /app/.devcontainer/scripts/post-install.sh",
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": 8080,
-
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
