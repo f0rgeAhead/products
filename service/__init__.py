@@ -22,6 +22,10 @@ import sys
 from flask import Flask
 from service import config
 from service.common import log_handlers
+from flask_restx import Api
+
+# Will be initialize when app is created
+api = None  # pylint: disable=invalid-name
 
 
 ############################################################
@@ -35,7 +39,20 @@ def create_app():
 
     # Initialize Plugins
     # pylint: disable=import-outside-toplevel
+    global api
+    api = Api(
+        app,
+        version="1.0.0",
+        title="Product REST API Service",
+        description="This is a Product service server.",
+        default="products",
+        default_label="Products service",
+        doc="/apidocs",  # default also could use doc='/apidocs/'
+        prefix="/api",
+    )
+
     from service.models import db
+
     db.init_app(app)
 
     with app.app_context():
