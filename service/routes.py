@@ -21,14 +21,12 @@ This service implements a REST API that allows you to Create, Read, Update
 and Delete Products
 """
 
-from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
+from flask_restx import Resource, fields, reqparse
 from service.models import Product
 from service.common import status  # HTTP Status Codes
-from flask_restx import Resource, fields, reqparse, inputs
-from functools import wraps
-from . import api
 from service.models import Status
+from . import api
 
 
 ############################################################
@@ -46,23 +44,9 @@ def health():
 @app.route("/")
 def index():
     """Root URL response"""
-    return (
-        jsonify(
-            {
-                "urls": [
-                    url_for("index", _external=True),
-                    url_for("create_products", _method="POST", _external=True),
-                    url_for("list_products", _external=True),
-                    url_for("read_products", product_id=1, _external=True),
-                    url_for("delete_products", product_id=1, _external=True),
-                    url_for(
-                        "like_product", _method="POST", product_id=1, _external=True
-                    ),
-                ]
-            }
-        ),
-        status.HTTP_200_OK,
-    )
+    return {
+        "status": "OK"
+    }, status.HTTP_200_OK  # using this as place holder, should change to return the index.html file
 
 
 create_model = api.model(
@@ -94,11 +78,11 @@ create_model = api.model(
             description="The rating of the product",
             default=0.0,
             max=10.0,
-            example=4.5,
+            example=5.0,
         ),
         "category": fields.String(
             description="The category of the product",
-            max_length=63,
+            max_length=120,
             example="clothes",
         ),
         "status": fields.String(
@@ -125,6 +109,21 @@ product_model = api.inherit(
             description="The unique identifier of the product",
         ),
     },
+)
+
+product_args = reqparse.RequestParser()
+product_args.add_argument(
+    "rating", type=str, location="args", required=False, help="List Products by rating"
+)
+product_args.add_argument(
+    "category",
+    type=str,
+    location="args",
+    required=False,
+    help="List Product by category",
+)
+product_args.add_argument(
+    "price", type=str, location="args", required=False, help="List Products by price"
 )
 
 ######################################################################
@@ -218,7 +217,7 @@ class ProductResource(Resource):
 ######################################################################
 #  PATH: /products
 ######################################################################
-@api.route("/products")
+@api.route("/products", strict_slashes=False)
 class ProductCollection(Resource):
     """Handles all interactions with collections of Products"""
 
@@ -226,11 +225,26 @@ class ProductCollection(Resource):
     # LIST ALL PRODUCTS
     # ------------------------------------------------------------------
     @api.doc("list_products")
+    @api.expect(product_args, validate=True)
     @api.marshal_list_with(product_model)
     def get(self):
         """Returns all Products"""
         app.logger.info("Request to list Products")
-        products = Product.all()
+        products = []
+        args = product_args.parse_args()
+        if args["category"]:
+            print(args["category"])
+            app.logger.info("Filtering by category: %s", args["category"])
+            products = Product.filter_by_query(category=args["category"])
+        elif args["price"]:
+            app.logger.info("Filtering by price: %s", args["price"])
+            products = Product.filter_by_query(price=args["price"])
+        elif args["rating"]:
+            app.logger.info("Filtering by rating: %s", args["rating"])
+            products = Product.filter_by_query(rating=args["rating"])
+        else:
+            app.logger.info("Returning unfiltered list")
+            products = Product.all()
         results = [product.serialize() for product in products]
         app.logger.info("Returning %d products", len(results))
         return results, status.HTTP_200_OK
@@ -302,5 +316,5 @@ def abort(error_code: int, message: str):
 
 
 def data_reset():
-    """Removes all Pets from the database"""
+    """Removes all Products from the database"""
     Product.remove_all()
