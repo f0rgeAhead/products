@@ -78,7 +78,7 @@ $(function () {
        
         let ajax = $.ajax({
             type: "POST",
-            url: "/products",
+            url: "/api/products",
             contentType: "application/json",
             data: JSON.stringify(data),
         });
