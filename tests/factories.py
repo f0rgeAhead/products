@@ -4,7 +4,7 @@ Test Factory to make fake objects for testing
 
 import factory
 from factory.fuzzy import FuzzyChoice
-from service.models import Product, Status
+from service.models.models import Product, Status
 
 
 class ProductFactory(factory.Factory):
@@ -15,7 +15,6 @@ class ProductFactory(factory.Factory):
 
         model = Product
 
-    id = factory.Sequence(lambda n: n)
     name = factory.Faker("name")
     img_url = factory.Faker("url")
     description = factory.Faker("text")

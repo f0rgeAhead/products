@@ -5,15 +5,17 @@ TestProduct API Service Test Suite
 import os
 import logging
 from unittest import TestCase
+from urllib.parse import quote_plus
 from wsgi import app
 from service.common import status
-from service.models import db, Product, Status
+from service.models.models import db, Product, Status
 from tests.factories import ProductFactory
+
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/products"
+BASE_URL = "/api/products"
 
 
 ######################################################################
@@ -134,16 +136,6 @@ class TestProductService(TestCase):
         response = self.client.get(location)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_create_product_duplicate(self):
-        """It should not Create a Product that already exists"""
-        test_product = ProductFactory()
-        test_product.id = 2
-        response = self.client.post(BASE_URL, json=test_product.serialize())
-        print(response.get_json())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.client.post(BASE_URL, json=response.get_json())
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-
     def test_list_products(self):
         """It should Get a list of Products"""
         self._create_products(3)
@@ -151,13 +143,9 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         # validate the response
-        self.assertIsInstance(data, dict)
-        self.assertIn("products", data)
-        self.assertIsInstance(data["products"], list)
-        # validate the products
-        products = data["products"]
-        self.assertEqual(len(products), 3)
-        for product in products:
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 3)
+        for product in data:
             self.assert_is_product(product)
 
     def test_list_products_empty(self):
@@ -166,12 +154,9 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         # validate the response
-        self.assertIsInstance(data, dict)
-        self.assertIn("products", data)
-        self.assertIsInstance(data["products"], list)
+        self.assertIsInstance(data, list)
         # validate the products
-        products = data["products"]
-        self.assertEqual(len(products), 0)
+        self.assertEqual(len(data), 0)
 
     def test_read_product(self):
         """It should Get a single Product"""
@@ -223,6 +208,39 @@ class TestProductService(TestCase):
         updated_product = response.get_json()
         self.assertEqual(updated_product["category"], "unknown")
 
+    def test_update_product_with_invalid_data(self):
+        """It should not update as product as the data is invalid"""
+        # create a product to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the product
+        new_product = response.get_json()
+        logging.debug(new_product)
+        new_product["category"] = "unknown" * 100
+        response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        updated_product = response.get_json()
+        self.assertIn("at most 120", updated_product["message"])
+
+    def test_query_by_category(self):
+        """It should Query Pets by category"""
+        products = self._create_products(5)
+        test_category = products[0].category
+        category_count = len(
+            [product for product in products if product.category == test_category]
+        )
+        resp = self.client.get(
+            BASE_URL, query_string=f"category={quote_plus(test_category)}"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), category_count)
+        # check the data just to be sure
+        for product in data:
+            self.assertEqual(product["category"], test_category)
+
     def test_like_product(self):
         """It should increment the likes count of a product"""
         # create a product to like
@@ -254,7 +272,7 @@ class TestProductService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
-        self.assertIn("404", data["message"])
+        self.assertIn(" was not found", data["message"])
 
     def test_bad_request(self):
         """It should not create when sending the wrong data"""

@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from unittest.mock import patch
 from wsgi import app
-from service.models import Product, db, DataValidationError
+from service.models.models import Product, db, DataValidationError
 from tests.factories import ProductFactory
 
 DATABASE_URI = os.getenv(
@@ -67,21 +67,21 @@ class TestProduct(TestCase):
         self.assertEqual(data.status, product.status)
         self.assertEqual(data.likes, product.likes)
 
-    @patch("service.models.db.session.commit")
+    @patch("service.models.models.db.session.commit")
     def test_create_product_failed(self, exception_mock):
         """It should not create a product on database error"""
         exception_mock.side_effect = Exception()
         product = ProductFactory()
         self.assertRaises(DataValidationError, product.create)
 
-    @patch("service.models.db.session.commit")
+    @patch("service.models.models.db.session.commit")
     def test_update_product_failed(self, exception_mock):
         """It should not update a product on database error"""
         exception_mock.side_effect = Exception()
         product = ProductFactory()
         self.assertRaises(DataValidationError, product.update)
 
-    @patch("service.models.db.session.commit")
+    @patch("service.models.models.db.session.commit")
     def test_delete_product_failed(self, exception_mock):
         """It should not delete a product on database error"""
         exception_mock.side_effect = Exception()
