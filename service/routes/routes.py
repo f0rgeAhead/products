@@ -23,10 +23,9 @@ and Delete Products
 
 from flask import current_app as app  # Import Flask application
 from flask_restx import Resource, fields, reqparse
-from service.models import Product
+from service.models.models import Product, Status
 from service.common import status  # HTTP Status Codes
-from service.models import Status
-from . import api
+from .. import api
 
 
 ############################################################

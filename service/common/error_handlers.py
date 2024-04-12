@@ -17,7 +17,7 @@
 Module: error_handlers
 """
 from flask import current_app as app  # Import Flask application
-from service.models import DataValidationError
+from service.models.models import DataValidationError
 from . import status
 from service import api
 

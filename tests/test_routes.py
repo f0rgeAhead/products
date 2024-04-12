@@ -8,7 +8,7 @@ from unittest import TestCase
 from urllib.parse import quote_plus
 from wsgi import app
 from service.common import status
-from service.models import db, Product, Status
+from service.models.models import db, Product, Status
 from tests.factories import ProductFactory
 
 
