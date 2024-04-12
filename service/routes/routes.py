@@ -43,9 +43,10 @@ def health():
 @app.route("/")
 def index():
     """Root URL response"""
-    return {
-        "status": "OK"
-    }, status.HTTP_200_OK  # using this as place holder, should change to return the index.html file
+    # return {
+    #     "status": "OK"
+    # }, status.HTTP_200_OK  # using this as place holder, should change to return the index.html file
+    return app.send_static_file("index.html")
 
 
 create_model = api.model(
