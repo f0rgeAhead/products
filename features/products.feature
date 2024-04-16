@@ -4,13 +4,13 @@ I need a RESTful catalog service
 So that I can keep track of all my products
 
 
-# Background:
-#         Given the following products
-#         | name        | img_url                 | description         | price | rating |  category |  status  | likes |
-#         | hamburger   | http://test/hamburger   | A hamburger         | 5.99  | 4.6    |  food     | DISABLED |   1   |
-#         | coke        | http://test/coke        | A coke              | 2.99  | 4.8    |  beverage | DISABLED |   1   |
-#         | water       | http://test/water       | A bottle of water   | 3.29  | 4.7    |  beverage | DISABLED |   1   |
-#         | apple       | http://test/apple       | An apple            | 1.09  | 4.6    |  fruit    | DISABLED |   1   |
+Background:
+        Given the following products
+        | name        | img_url                 | description         | price | rating |  category |  status  | likes |
+        | hamburger   | http://test/hamburger   | A hamburger         | 5.99  | 4.6    |  food     | DISABLED |   1   |
+        | coke        | http://test/coke        | A coke              | 2.99  | 4.8    |  beverage | DISABLED |   1   |
+        | water       | http://test/water       | A bottle of water   | 3.29  | 4.7    |  beverage | DISABLED |   1   |
+        | apple       | http://test/apple       | An apple            | 1.09  | 4.6    |  fruit    | DISABLED |   1   |
 
 
 Scenario: The server is running
@@ -37,7 +37,7 @@ Scenario: Create a Product
 
 
 #####################################################################
-#                       List scenario                             #
+#                       List scenario                               #
 #####################################################################
 Scenario: List all Products
     When I visit the "Home Page"
@@ -46,3 +46,39 @@ Scenario: List all Products
     And I should see "Banana" in the results
 
 
+#####################################################################
+#                       Update scenario                             #
+#####################################################################
+Scenario: Update a product
+    When I visit the "Home Page"
+    And I set the "Name" to "hamburger"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "hamburger" in the "Name" field
+    And I should see "food" in the "Category" field
+    When I change "Name" to "fries"
+    And I press the "Update" button
+    Then I should see the message "Update successfully!"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "fries" in the "Name" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "fries" in the results
+    And I should not see "hamburger" in the results
+
+Scenario: Update a product without id field
+    When I visit the "Home Page"
+    And I press the "Update" button
+    Then I should see the message "Please provide a valid product ID!"
+
+Scenario: Update a product not exisetd
+    When I visit the "Home Page"
+     And I press the "Search" button
+    And I set the "Id" to "-1"
+    And I press the "Update" button
+    Then I should see the message "Fail: Product -1 does not exist!"

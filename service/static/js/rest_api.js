@@ -45,7 +45,6 @@ $(function () {
     // Create a Product
     // ****************************************
  
- 
     $("#create-btn").click(function () {
  
  
@@ -95,27 +94,94 @@ $(function () {
         });
     });
  
- 
- 
- 
     // ****************************************
     // Update a Product
     // ****************************************
- 
- 
- 
- 
- 
+
+    $("#update-btn").click(function () {
+
+        let id = $("#product_id").val();
+        let name = $("#product_name").val();
+        let img_url = $("#product_img_url").val();
+        let description = $("#product_description").val();
+        let price = parseFloat($("#product_price").val());
+        let rating = parseFloat($("#product_rating").val());
+        let category = $("#product_category").val();
+        let status = $("#product_status").val();
+        let likes = parseInt($("#product_likes").val(), 10);
+        if (isNaN(likes)) {
+            likes = 0;
+        }
+
+        let data = {
+            "name": name,
+            "img_url": img_url,
+            "description": description,
+            "price": price,
+            "rating": rating,
+            "category": category,
+            "status": status,
+            "likes": likes
+        };
+
+        $("#flash_message").empty();
+        if (id != ""){
+            let ajax = $.ajax({
+                    type: "PUT",
+                    url: `/api/products/${id}`,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
+                })
+    
+            ajax.done(function(res){
+                update_form_data(res)
+                flash_message("Update successfully!")
+            });
+    
+            ajax.fail(function(res){
+                flash_message("Fail: Product " + id + " does not exist!")
+            });
+        }else{
+            clear_form_data()
+            flash_message("Please provide a valid product ID!");
+        }
+    });
  
     // ****************************************
     // Retrieve a Product
     // ****************************************
 
-    
- 
- 
- 
- 
+    $("#retrieve-btn").click(function () {
+
+        let product_id = $("#product_id").val();
+
+        $("#flash_message").empty();
+
+        if (product_id != ""){
+            let ajax = $.ajax({
+                type: "GET",
+                url: `/api/products/${product_id}`,
+                contentType: "application/json",
+                data: ''
+            })
+
+            ajax.done(function(res){
+                //alert(res.toSource())
+                update_form_data(res)
+                flash_message("Success")
+            });
+
+            ajax.fail(function(res){
+                clear_form_data()
+                flash_message("Fail: Product " + id + " does not exist!")
+            });
+        }else{
+            clear_form_data()
+            flash_message("Please provide a valid product ID!")
+        }
+
+    });
+
     // ****************************************
     // Delete a Product
     // ****************************************
@@ -134,8 +200,6 @@ $(function () {
         clear_form_data()
     });
     
- 
- 
     // ****************************************
     // Search for a Product
     // ****************************************
@@ -221,7 +285,4 @@ $(function () {
         });
 
     });
- 
- 
- 
  }) 
