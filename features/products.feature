@@ -35,3 +35,14 @@ Scenario: Create a Product
    And I press the "Create" button
    Then I should see the message "Success"
 
+
+#####################################################################
+#                       List scenario                             #
+#####################################################################
+Scenario: List all Products
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Banana" in the results
+
+
