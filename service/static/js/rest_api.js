@@ -16,9 +16,8 @@ $(function () {
         $("#product_rating").val(res.rating);
         $("#product_category").val(res.category);
         $("#product_status").val(res.status);
-        $("#product_likes").val(res.like);
+        $("#product_likes").val(res.likes);
     }
- 
  
     /// Clears all form fields
     function clear_form_data() {
@@ -33,20 +32,17 @@ $(function () {
         $("#product_likes").val("");
     }
  
- 
     // Updates the flash message area
     function flash_message(message) {
         $("#flash_message").empty();
         $("#flash_message").append(message);
     }
  
- 
     // ****************************************
     // Create a Product
     // ****************************************
  
     $("#create-btn").click(function () {
- 
  
         let name = $("#product_name").val();
         let img_url = $("#product_img_url").val();
@@ -60,7 +56,6 @@ $(function () {
             likes = 0;
         }
  
- 
         let data = {
             "name": name,
             "img_url": img_url,
@@ -71,7 +66,6 @@ $(function () {
             "status": status,
             "likes": likes
         };
- 
  
         $("#flash_message").empty();
        
@@ -264,7 +258,7 @@ $(function () {
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.img_url}</td><td>${product.description}</td><td>${product.price}</td><td>${product.rating}</td><td>${product.category}</td><td>${product.status}</td><td>${product.like}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.img_url}</td><td>${product.description}</td><td>${product.price}</td><td>${product.rating}</td><td>${product.category}</td><td>${product.status}</td><td>${product.likes}</td></tr>`;
                 if (i == 0) {
                     firstProduct = product;
                 }
