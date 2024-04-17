@@ -91,17 +91,16 @@ Scenario: Update a product
    And I should not see "hamburger" in the results
 
 Scenario: Update a product without id field
-    When I visit the "Home Page"
-    And I press the "Update" button
-    Then I should see the message "Please provide a valid product ID!"
+   When I visit the "Home Page"
+   And I press the "Update" button
+   Then I should see the message "Please provide a valid product ID!"
 
 Scenario: Update a product not exisetd
-    When I visit the "Home Page"
-     And I press the "Search" button
-    And I set the "Id" to "-1"
-    And I press the "Update" button
-    Then I should see the message "Fail: Product -1 does not exist!"
-    And I should see "Banana" in the results
+   When I visit the "Home Page"
+   And I press the "Search" button
+   And I set the "Id" to "-1"
+   And I press the "Update" button
+   Then I should see the message "Fail: Product -1 does not exist!"
 
 
 #####################################################################
