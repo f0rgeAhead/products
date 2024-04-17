@@ -77,7 +77,7 @@ Scenario: Update a product
    When I change "Name" to "fries"
    And I change "Img_url" to "http://test/fries"
    And I press the "Update" button
-   Then I should see the message "Update successfully!"
+   Then I should see the message "Product has been updated!"
    When I copy the "Id" field
    And I press the "Clear" button
    And I paste the "Id" field

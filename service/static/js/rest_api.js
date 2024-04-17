@@ -131,7 +131,7 @@ $(function () {
     
             ajax.done(function(res){
                 update_form_data(res)
-                flash_message("Update successfully!")
+                flash_message("Product has been updated!")
             });
     
             ajax.fail(function(res){
