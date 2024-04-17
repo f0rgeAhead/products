@@ -33,7 +33,7 @@ Scenario: Create a Product
    And I select "Active" in the "Status" dropdown
    And I set the "Likes" to "0"
    And I press the "Create" button
-   Then I should see the message "Success"
+   Then I should see the message "Product has been created!"
    When I copy the "Id" field
    And I press the "Clear" button
    Then the "Id" field should be empty
@@ -56,12 +56,12 @@ Scenario: Create a Product
 #                       List scenario                               #
 #####################################################################
 Scenario: List all Products
-    When I visit the "Home Page"
-    And I press the "Search" button
-    Then I should see the message "Success"
-    And I should see "hamburger" in the results
-    And I should see "coke" in the results
-    And I should not see "milk" in the results
+   When I visit the "Home Page"
+   And I press the "Search" button
+   Then I should see the message "Success"
+   And I should see "hamburger" in the results
+   And I should see "coke" in the results
+   And I should not see "milk" in the results
 
 
 #####################################################################
@@ -77,7 +77,7 @@ Scenario: Update a product
    When I change "Name" to "fries"
    And I change "Img_url" to "http://test/fries"
    And I press the "Update" button
-   Then I should see the message "Update successfully!"
+   Then I should see the message "Product has been updated!"
    When I copy the "Id" field
    And I press the "Clear" button
    And I paste the "Id" field
@@ -91,13 +91,42 @@ Scenario: Update a product
    And I should not see "hamburger" in the results
 
 Scenario: Update a product without id field
-    When I visit the "Home Page"
-    And I press the "Update" button
-    Then I should see the message "Please provide a valid product ID!"
+   When I visit the "Home Page"
+   And I press the "Update" button
+   Then I should see the message "Please provide a valid product ID!"
 
 Scenario: Update a product not exisetd
-    When I visit the "Home Page"
-     And I press the "Search" button
-    And I set the "Id" to "-1"
-    And I press the "Update" button
-    Then I should see the message "Fail: Product -1 does not exist!"
+   When I visit the "Home Page"
+   And I press the "Search" button
+   And I set the "Id" to "-1"
+   And I press the "Update" button
+   Then I should see the message "Fail: Product -1 does not exist!"
+
+
+#####################################################################
+#                       Delete scenario                             #
+#####################################################################
+Scenario: Delete a Product
+   When I visit the "Home Page"
+   And I press the "Clear" button
+   And I set the "Name" to "hamburger"
+   And I press the "Search" button
+   Then I should see the message "Success"
+   And I should see "hamburger" in the results
+   When I copy the "Id" field
+   And I press the "Clear" button
+   And I paste the "Id" field
+   And I press the "Delete" button
+   Then I should see the message "Product has been deleted!"
+   When I press the "Clear" button
+   And I set the "Name" to "hamburger"
+   And I press the "Search" button
+   Then I should see the message "Success"
+   And I should not see "hamburger" in the results
+   When I press the "Clear" button
+   And I set the "Id" to "-1"
+   And I press the "Delete" button
+   Then I should see the message "Server error!"
+
+
+

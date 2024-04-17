@@ -37,6 +37,8 @@ $(function () {
         $("#flash_message").empty();
         $("#flash_message").append(message);
     }
+
+    let root = "/api/products"
  
     // ****************************************
     // Create a Product
@@ -71,7 +73,7 @@ $(function () {
        
         let ajax = $.ajax({
             type: "POST",
-            url: "/api/products",
+            url: root,
             contentType: "application/json",
             data: JSON.stringify(data),
         });
@@ -79,7 +81,7 @@ $(function () {
  
         ajax.done(function(res){
             update_form_data(res)
-            flash_message("Success")
+            flash_message("Product has been created!")
         });
  
  
@@ -129,7 +131,7 @@ $(function () {
     
             ajax.done(function(res){
                 update_form_data(res)
-                flash_message("Update successfully!")
+                flash_message("Product has been updated!")
             });
     
             ajax.fail(function(res){
@@ -179,6 +181,30 @@ $(function () {
     // ****************************************
     // Delete a Product
     // ****************************************
+
+    $("#delete-btn").click(function () {
+
+        let product_id = $("#product_id").val();
+        if (!product_id) return;
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `${root}/${product_id}`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Product has been deleted!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    });
  
  
  
@@ -235,7 +261,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/api/products?${queryString}`,
+            url: `${root}?${queryString}`,
             contentType: "application/json",
             data: ''
         })
