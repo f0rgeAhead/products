@@ -54,7 +54,7 @@ $(function () {
         let category = $("#product_category").val();
         let status = $("#product_status").val();
         let likes = parseInt($("#product_likes").val(), 10);
-        if (Number.isNaN(likes)) {
+        if (isNaN(likes)) {
             likes = 0;
         }
  

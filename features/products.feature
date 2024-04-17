@@ -33,7 +33,7 @@ Scenario: Create a Product
    And I select "Active" in the "Status" dropdown
    And I set the "Likes" to "0"
    And I press the "Create" button
-   Then I should see the message "Success"
+   Then I should see the message "Product has been created!"
    When I copy the "Id" field
    And I press the "Clear" button
    Then the "Id" field should be empty
