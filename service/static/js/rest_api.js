@@ -16,9 +16,8 @@ $(function () {
         $("#product_rating").val(res.rating);
         $("#product_category").val(res.category);
         $("#product_status").val(res.status);
-        $("#product_likes").val(res.like);
+        $("#product_likes").val(res.likes);
     }
- 
  
     /// Clears all form fields
     function clear_form_data() {
@@ -33,21 +32,17 @@ $(function () {
         $("#product_likes").val("");
     }
  
- 
     // Updates the flash message area
     function flash_message(message) {
         $("#flash_message").empty();
         $("#flash_message").append(message);
     }
  
- 
     // ****************************************
     // Create a Product
     // ****************************************
  
- 
     $("#create-btn").click(function () {
- 
  
         let name = $("#product_name").val();
         let img_url = $("#product_img_url").val();
@@ -61,7 +56,6 @@ $(function () {
             likes = 0;
         }
  
- 
         let data = {
             "name": name,
             "img_url": img_url,
@@ -72,7 +66,6 @@ $(function () {
             "status": status,
             "likes": likes
         };
- 
  
         $("#flash_message").empty();
        
@@ -95,27 +88,94 @@ $(function () {
         });
     });
  
- 
- 
- 
     // ****************************************
     // Update a Product
     // ****************************************
- 
- 
- 
- 
- 
+
+    $("#update-btn").click(function () {
+
+        let id = $("#product_id").val();
+        let name = $("#product_name").val();
+        let img_url = $("#product_img_url").val();
+        let description = $("#product_description").val();
+        let price = parseFloat($("#product_price").val());
+        let rating = parseFloat($("#product_rating").val());
+        let category = $("#product_category").val();
+        let status = $("#product_status").val();
+        let likes = parseInt($("#product_likes").val(), 10);
+        if (isNaN(likes)) {
+            likes = 0;
+        }
+
+        let data = {
+            "name": name,
+            "img_url": img_url,
+            "description": description,
+            "price": price,
+            "rating": rating,
+            "category": category,
+            "status": status,
+            "likes": likes
+        };
+
+        $("#flash_message").empty();
+        if (id != ""){
+            let ajax = $.ajax({
+                    type: "PUT",
+                    url: `/api/products/${id}`,
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
+                })
+    
+            ajax.done(function(res){
+                update_form_data(res)
+                flash_message("Update successfully!")
+            });
+    
+            ajax.fail(function(res){
+                flash_message("Fail: Product " + id + " does not exist!")
+            });
+        }else{
+            clear_form_data()
+            flash_message("Please provide a valid product ID!");
+        }
+    });
  
     // ****************************************
     // Retrieve a Product
     // ****************************************
 
-    
- 
- 
- 
- 
+    $("#retrieve-btn").click(function () {
+
+        let product_id = $("#product_id").val();
+
+        $("#flash_message").empty();
+
+        if (product_id != ""){
+            let ajax = $.ajax({
+                type: "GET",
+                url: `/api/products/${product_id}`,
+                contentType: "application/json",
+                data: ''
+            })
+
+            ajax.done(function(res){
+                //alert(res.toSource())
+                update_form_data(res)
+                flash_message("Success")
+            });
+
+            ajax.fail(function(res){
+                clear_form_data()
+                flash_message("Fail: Product " + id + " does not exist!")
+            });
+        }else{
+            clear_form_data()
+            flash_message("Please provide a valid product ID!")
+        }
+
+    });
+
     // ****************************************
     // Delete a Product
     // ****************************************
@@ -134,8 +194,6 @@ $(function () {
         clear_form_data()
     });
     
- 
- 
     // ****************************************
     // Search for a Product
     // ****************************************
@@ -200,7 +258,7 @@ $(function () {
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.img_url}</td><td>${product.description}</td><td>${product.price}</td><td>${product.rating}</td><td>${product.category}</td><td>${product.status}</td><td>${product.like}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.img_url}</td><td>${product.description}</td><td>${product.price}</td><td>${product.rating}</td><td>${product.category}</td><td>${product.status}</td><td>${product.likes}</td></tr>`;
                 if (i == 0) {
                     firstProduct = product;
                 }
@@ -221,7 +279,4 @@ $(function () {
         });
 
     });
- 
- 
- 
  }) 
