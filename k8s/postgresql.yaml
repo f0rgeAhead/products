@@ -1,8 +1,12 @@
+# The petstore database should be created for you, if not here is the command:
+# psql -c "create database petstore;" -U postgres
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  labels:
+    app: postgres
 spec:
   serviceName: "postgres"
   replicas: 1
@@ -70,6 +74,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
+  labels:
+    app: postgres
 spec:
   type: ClusterIP
   selector:
@@ -101,6 +107,7 @@ kind: Secret
 metadata:
   name: postgres-creds
 data:
-  password: cG9zdGdyZXMtY3JlZHM=
+  password: cGdzM2NyM3Q=
   database_uri: |
-      cG9zdGdyZXNxbCtwc3ljb3BnOi8vcG9zdGdyZXM6cG9zdGdyZXNAcG9zdGdyZXM6NTQzMi9wb3N0Z3Jlcw==
+      cG9zdGdyZXNxbCtwc3ljb3BnOi8vcG9zdGdyZXM6cGdzM2NyM3RAcG9zdGdyZXM6NTQzMi9wZXRz
+      dG9yZQ==
